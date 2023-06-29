@@ -1,78 +1,42 @@
 #include "main.h"
-
-char *stringAdd(char *digit1, char *digit2, char *r, int r_index);
-char *infinite_add(char *digit1, char *digit2, char *r, int size_r);
-
 /**
- * stringAdd - Adds the numbers.
- * @digit1: the first number to be added.
- * @digit2: the second number to be added.
- * @r: the result.
- * @r_index: The current index.
- *
- * Return: result + index
- */
-char *stringAdd(char *digit1, char *digit2, char *r, int r_index)
+* print_buffer - prints a buffer 10 bytes at a time in hex then ascii format
+*
+* @b: buffer to print
+* @size: size of buffer
+*
+* Return: void
+*/
+void print_buffer(char *b, int size)
 {
-	int num, tens = 0;
+	int byte = 0, index;
 
-	for (; *digit1 && *digit2; digit1--, digit2--, r_index--)
+	for (; byte < size; byte += 10)
 	{
-		num = (*digit1 - '0') + (*digit2 - '0');
-		num += tens;
-		*(r + r_index) = (num % 10) + '0';
-		tens = num / 10;
+		printf("%08x: ", byte);
+		for (index = 0; index < 10; index++)
+		{
+			if (index % 2 == 0 && index != 0)
+				printf(" ");
+			if (byte + index < size)
+				printf("%02x", b[byte + index]);
+			else
+				printf("  ");
+		}
+		printf(" ");
+		for (index = 0; index < 10; index++)
+		{
+			if (byte + index >= size)
+				break;
+			if (b[byte + index] >= 32 && b[byte + index] <= 126)
+				printf("%c", b[byte + index]);
+			else
+				printf(".");
+		}
+		if (byte >= size)
+			continue;
+		printf("\n");
 	}
-
-	for (; *digit1; digit1--, r_index--)
-	{
-		num = (*digit1 - '0') + tens;
-		*(r + r_index) = (num % 10) + '0';
-		tens = num / 10;
-	}
-
-	for (; *digit2; digit2--, r_index--)
-	{
-		num = (*digit2 - '0') + tens;
-		*(r + r_index) = (num % 10) + '0';
-		tens = num / 10;
-	}
-
-	if (tens && r_index >= 0)
-	{
-		*(r + r_index) = (tens % 10) + '0';
-		return (r + r_index);
-	}
-
-	else if (tens && r_index < 0)
-		return (0);
-
-	return (r + r_index + 1);
-}
-/**
- * infinite_add - Adds infinite 2 numbers.
- * @digit1: The first number to be added.
- * @digit2: The second number to be added.
- * @r: the result.
- * @size_r: The size
- * Return: stringAdd return value.
- */
-char *infinite_add(char *digit1, char *digit2, char *r, int size_r)
-{
-	int index, digit1_len = 0, digit2_len = 0;
-
-	for (index = 0; *(digit1 + index); index++)
-		digit1_len++;
-
-	for (index = 0; *(digit2 + index); index++)
-		digit2_len++;
-
-	if (size_r <= digit1_len + 1 || size_r <= digit2_len + 1)
-		return (0);
-
-	digit1 += digit1_len - 1;
-	digit2 += digit2_len - 1;
-	*(r + size_r) = '\0';
-
-	return (stringAdd(digit1, digit2, r, --size_r));
+	if (size <= 0)
+		printf("\n");
 }
